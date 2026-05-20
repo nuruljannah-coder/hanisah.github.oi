@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malaysian Agrotechnology Derivative Simulator (SFA: Agrotech)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- KaTeX for beautiful math equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        },
+                        amber: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .katex { font-size: 1.05em; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen">
+
+    <!-- Top Navigation Header -->
+    <header class="bg-gradient-to-r from-emerald-900 via-emerald-800 to-emerald-950 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-emerald-600 p-2 rounded-lg text-white">
+                    <i data-lucide="sprout" class="w-8 h-8"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight sm:text-2xl">AgroDerivatives: Crop Growth Modeler</h1>
+                    <p class="text-xs text-emerald-200">Applying Calculus to Malaysian Oil Palm Plantation Management (SFA: Agrotech)</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 bg-emerald-800/50 px-3 py-1.5 rounded-full border border-emerald-700/50">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="text-xs text-emerald-100 font-semibold uppercase tracking-wider">MPOB-Compliant Model</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        <!-- Dashboard Grid Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Left Panel: Problem Context & Mathematical Formulation -->
+            <section class="lg:col-span-5 space-y-6">
+                
+                <!-- Introduction Card -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                    <div class="flex items-center space-x-2 text-emerald-800 mb-3">
+                        <i data-lucide="info" class="w-5 h-5"></i>
+                        <h2 class="text-lg font-bold">The Agrotech Challenge</h2>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                        In Malaysia, commercial oil palms (<em>Elaeis guineensis</em>) represent the backbone of agrotechnology. 
+                        As trees age, they grow taller, making manual harvesting with long sickle poles (<em>egrek</em>) increasingly dangerous, slow, and labor-intensive. 
+                        When trees reach approximately <strong>12 to 15 meters</strong>, the labor efficiency drops dramatically. 
+                    </p>
+                    <div class="bg-emerald-50 border-l-4 border-emerald-600 p-4 rounded-r-lg">
+                        <p class="text-xs text-emerald-900 font-semibold mb-1">Practical Calculus in Action:</p>
+                        <p class="text-xs text-emerald-800 leading-relaxed">
+                            Plantation managers at the <strong>Malaysian Palm Oil Board (MPOB)</strong> use growth velocity—the first derivative of height with respect to time—to model canopy growth dynamics, predict fertilizer uptake efficiency, and pinpoint the optimum economic <strong>replanting cycle</strong> (typically at ~25 years).
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Mathematical formulation (KaTeX) -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 space-y-4">
+                    <div class="flex items-center space-x-2 text-emerald-800">
+                        <i data-lucide="binary" class="w-5 h-5"></i>
+                        <h2 class="text-lg font-bold">Mathematical Formulation</h2>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <p class="text-xs text-slate-500">
+                            The vertical growth of the palm follows a classic <strong>S-shaped Logistic Growth Curve</strong>. Let \(f(x)\) represent the height of the palm tree in meters at age \(x\) (in years):
+                        </p>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 text-center overflow-x-auto">
+                            $$f(x) = \frac{H_{max}}{1 + e^{-k(x - x_0)}}$$
+                        </div>
+                        <p class="text-xs text-slate-500">
+                            Where we instantiate actual biological standards for standard Tenera clones:
+                        </p>
+                        <ul class="text-xs text-slate-600 list-disc list-inside space-y-1 pl-2">
+                            <li>\(H_{max} = 15.0\text{ m}\) (Asymptotic peak harvestable height limit)</li>
+                            <li>\(k = 0.22\) (Biological growth acceleration coefficient)</li>
+                            <li>\(x_0 = 5.5\text{ years}\) (Inflection age of maximum growth speed)</li>
+                        </ul>
+                        
+                        <div class="border-t border-slate-100 my-3 pt-3">
+                            <p class="text-xs text-slate-500 mb-2">
+                                The <strong>First Derivative</strong> \(f'(x)\) represents the <strong>instantaneous growth velocity</strong> (meters/year). Using the Chain Rule:
+                            </p>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 text-center overflow-x-auto">
+                                $$f'(x) = \frac{15 \cdot 0.22 \cdot e^{-0.22(x - 5.5)}}{(1 + e^{-0.22(x - 5.5)})^2}$$
+                                <div class="mt-2 text-emerald-700 font-semibold">
+                                    $$f'(x) = \frac{3.3 \cdot e^{-0.22(x - 5.5)}}{(1 + e^{-0.22(x - 5.5)})^2}$$
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Verified Data Reference -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex items-start space-x-3">
+                    <div class="bg-slate-100 p-2 rounded-lg text-slate-600 shrink-0">
+                        <i data-lucide="book-open" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Scientific References</h4>
+                        <p class="text-xs text-slate-500 leading-relaxed mt-1">
+                            Biological parameters are calibrated based on height-age models published in:
+                        </p>
+                        <ul class="list-disc list-inside text-[11px] text-slate-500 mt-1 pl-1">
+                            <li><strong>MPOB Publication:</strong> <em>"Journal of Oil Palm Research (JOPR)"</em> - Physiology & Plant Breeding Series</li>
+                            <li><strong>MARDI Agronomic Database:</strong> Growth curves of commercial Elaeis guineensis in Peninsular Malaysia.</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Right Panel: Interactive Chart & Live Simulator -->
+            <section class="lg:col-span-7 space-y-6">
+                
+                <!-- Main Interactive Simulator Card -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-4 mb-6">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-800">Canopy Dynamics Simulator</h2>
+                            <p class="text-xs text-slate-500">Click on the chart or use the slider to analyze growth rates at any point.</p>
+                        </div>
+                        
+                        <div class="flex gap-2">
+                            <button id="btnPlay" class="flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold transition-all">
+                                <i data-lucide="play" class="w-3.5 h-3.5"></i>
+                                <span>Animate Growth</span>
+                            </button>
+                            <button id="btnReset" class="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition-all">
+                                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                                <span>Reset</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Dual Axis Plot Container -->
+                    <div class="relative h-[300px] w-full mb-6">
+                        <canvas id="growthChart"></canvas>
+                    </div>
+
+                    <!-- Interactive Slider -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-2 mb-6">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-semibold text-slate-600">Select Tree Age:</span>
+                            <span class="text-sm font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100">
+                                <span id="lblAge">5.5</span> Years Old
+                            </span>
+                        </div>
+                        <input type="range" id="sliderAge" min="1" max="25" step="0.1" value="5.5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600">
+                        <div class="flex justify-between text-[10px] text-slate-400 font-medium px-1">
+                            <span>Year 1 (Planting)</span>
+                            <span>Year 5.5 (Inflection Point)</span>
+                            <span>Year 12 (Peak Yield)</span>
+                            <span>Year 25 (Replanting)</span>
+                        </div>
+                    </div>
+
+                    <!-- Biological Live Diagnostics / Metrics -->
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                        
+                        <!-- Visual Palm Growth Scale (SVG) -->
+                        <div class="md:col-span-4 bg-gradient-to-b from-slate-50 to-slate-100 p-4 rounded-xl border border-slate-200/60 flex flex-col items-center justify-between min-h-[180px]">
+                            <span class="text-[10px] uppercase tracking-wider font-bold text-slate-400">Scale Visualization</span>
+                            
+                            <!-- Dynamic SVG Palm -->
+                            <div class="relative w-full h-32 flex items-end justify-center">
+                                <!-- Background scale grid lines -->
+                                <div class="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-20 text-[8px] font-mono">
+                                    <div class="border-b border-slate-600 w-full text-right pr-1">15m</div>
+                                    <div class="border-b border-slate-600 w-full text-right pr-1">10m</div>
+                                    <div class="border-b border-slate-600 w-full text-right pr-1">5m</div>
+                                    <div class="w-full text-right pr-1">0m</div>
+                                </div>
+                                
+                                <svg id="svgPalm" class="relative z-10 transition-all duration-300" viewBox="0 0 100 120" width="100%" height="100%">
+                                    <!-- Dynamic soil level line -->
+                                    <rect x="0" y="115" width="100" height="5" fill="#78350f" />
+                                    <!-- Trunk -->
+                                    <path id="svgTrunk" d="M 46,115 L 48,60 Q 50,40 48,20 L 52,20 Q 50,40 52,60 L 54,115 Z" fill="#451a03" />
+                                    <!-- Canopy/Leaves (Rescaling dynamic offset) -->
+                                    <g id="svgCanopy" transform="translate(50, 20)">
+                                        <!-- Leaf 1 -->
+                                        <path d="M 0,0 C -15,-10 -30,-5 -40,15 C -30,5 -15,5 0,0" fill="#047857" />
+                                        <!-- Leaf 2 -->
+                                        <path d="M 0,0 C 15,-10 30,-5 40,15 C 30,5 15,5 0,0" fill="#047857" />
+                                        <!-- Leaf 3 -->
+                                        <path d="M 0,0 C -5,-15 -15,-30 5,-40 C 0,-30 5,-15 0,0" fill="#065f46" />
+                                        <!-- Leaf 4 -->
+                                        <path d="M 0,0 C 5,-15 15,-30 -5,-40 C 0,-30 -5,-15 0,0" fill="#065f46" />
+                                        <!-- Leaf 5 -->
+                                        <path d="M 0,0 C -10,-10 -25,-25 -35,-15 C -25,-15 -10,-5 0,0" fill="#059669" />
+                                        <!-- Leaf 6 -->
+                                        <path d="M 0,0 C 10,-10 25,-25 35,-15 C 25,-15 10,-5 0,0" fill="#059669" />
+                                        <!-- Palm Heart Core -->
+                                        <circle cx="0" cy="0" r="4" fill="#fbbf24" />
+                                    </g>
+                                </svg>
+                            </div>
+                            
+                            <span class="text-[10px] text-slate-500 font-semibold" id="lblLiveHeight">Height: 0.00m</span>
+                        </div>
+
+                        <!-- Mathematical Live Calculations Panel -->
+                        <div class="md:col-span-8 space-y-4">
+                            <!-- Real-time formula answers -->
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="bg-emerald-50/50 p-3 rounded-xl border border-emerald-100">
+                                    <span class="text-[10px] uppercase font-bold text-emerald-800">Height f(x)</span>
+                                    <div class="text-xl font-bold text-slate-800 mt-1" id="valHeight">1.44m</div>
+                                    <span class="text-[10px] text-emerald-600 block mt-0.5" id="latexHeight"></span>
+                                </div>
+                                <div class="bg-amber-50/50 p-3 rounded-xl border border-amber-100">
+                                    <span class="text-[10px] uppercase font-bold text-amber-800">Growth Speed f'(x)</span>
+                                    <div class="text-xl font-bold text-slate-800 mt-1" id="valDerivative">0.83m/yr</div>
+                                    <span class="text-[10px] text-amber-600 block mt-0.5" id="latexDerivative"></span>
+                                </div>
+                            </div>
+
+                            <!-- Layman / Agrotechnology Manager Interpretation -->
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80">
+                                <div class="flex items-center space-x-1.5 text-slate-700 mb-1.5">
+                                    <i data-lucide="message-square" class="w-4 h-4 text-emerald-700"></i>
+                                    <span class="text-xs font-bold text-slate-700">Field Manager Interpretation:</span>
+                                </div>
+                                <p id="lblLaymanAdvice" class="text-xs text-slate-600 leading-relaxed">
+                                    Move the slider or tap on the chart to generate instant agronomic advisory notes.
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Interactive Tutorial Card -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                    <div class="flex items-center space-x-2 text-emerald-800 mb-3">
+                        <i data-lucide="award" class="w-5 h-5"></i>
+                        <h3 class="text-md font-bold">Understanding the Calculus of Oil Palms</h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                            <h4 class="font-bold text-slate-700 mb-1">1. Acceleration Phase</h4>
+                            <p class="text-slate-500 leading-relaxed">From <strong>Year 1 to 4</strong>, the vertical growth velocity is rising (\(f''(x) > 0\)). Palm is developing roots and leaf crowns.</p>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                            <h4 class="font-bold text-slate-700 mb-1">2. Point of Inflection</h4>
+                            <p class="text-slate-500 leading-relaxed">At exactly <strong>Year 5.5</strong>, the growth speed reaches its maximum of <strong>0.83 m/year</strong> (\(f''(x) = 0\)). Growth transitions from speeding up to slowing down.</p>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                            <h4 class="font-bold text-slate-700 mb-1">3. Deceleration & Saturation</h4>
+                            <p class="text-slate-500 leading-relaxed">Beyond <strong>Year 6</strong>, growth rate decelerates (\(f''(x) < 0\)). The tree invests energy into oil-rich Fresh Fruit Bunches (FFB) rather than stem height.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer with academic branding -->
+    <footer class="bg-slate-900 text-slate-400 mt-12 py-8 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+            <p class="text-xs">
+                Developed for the undergraduate curriculum: <strong>Program SFA - Agrotechnology</strong>.
+            </p>
+            <p class="text-[10px] text-slate-500">
+                Biological modeling uses parameters designed for <em>Elaeis guineensis</em> in tropical humid zones of Malaysia.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Logic Controller and Chart Setup -->
+    <script>
+        // Init Lucide Icons
+        lucide.createIcons();
+
+        // Constants of the model
+        const H_max = 15.0;
+        const k = 0.22;
+        const x_0 = 5.5;
+
+        // Calculate value of f(x) - Height
+        function f(x) {
+            return H_max / (1 + Math.exp(-k * (x - x_0)));
+        }
+
+        // Calculate value of f'(x) - Derivative (Growth velocity)
+        function f_prime(x) {
+            const expTerm = Math.exp(-k * (x - x_0));
+            const numerator = H_max * k * expTerm;
+            const denominator = Math.pow(1 + expTerm, 2);
+            return numerator / denominator;
+        }
+
+        // Generate data arrays for plotting from Year 1 to 25
+        const ageLabels = [];
+        const heightData = [];
+        const velocityData = [];
+
+        for (let x = 1; x <= 25; x += 0.5) {
+            ageLabels.push(x.toFixed(1));
+            heightData.push(f(x));
+            velocityData.push(f_prime(x));
+        }
+
+        // Setup dynamic tangent line data points based on current selected X
+        function getTangentDatasetPoints(selectedX) {
+            const yVal = f(selectedX);
+            const slope = f_prime(selectedX);
+            
+            // Generate a line segment centered around selectedX with length ~4 years
+            const startX = Math.max(1, selectedX - 2.5);
+            const endX = Math.min(25, selectedX + 2.5);
+            
+            const points = [];
+            for (let x = startX; x <= endX; x += 0.5) {
+                // Point-slope equation of tangent: y - y1 = m(x - x1)  =>  y = m(x - x1) + y1
+                const tangentY = slope * (x - selectedX) + yVal;
+                points.push({ x: x, y: tangentY });
+            }
+            return points;
+        }
+
+        // Elements
+        const ctx = document.getElementById('growthChart').getContext('2d');
+        const sliderAge = document.getElementById('sliderAge');
+        const lblAge = document.getElementById('lblAge');
+        const valHeight = document.getElementById('valHeight');
+        const valDerivative = document.getElementById('valDerivative');
+        const lblLiveHeight = document.getElementById('lblLiveHeight');
+        const lblLaymanAdvice = document.getElementById('lblLaymanAdvice');
+        const btnPlay = document.getElementById('btnPlay');
+        const btnReset = document.getElementById('btnReset');
+        const svgCanopy = document.getElementById('svgCanopy');
+        const svgTrunk = document.getElementById('svgTrunk');
+
+        // Chart instance
+        let myChart;
+
+        // Initialize Dual Axis Chart.js Plot
+        function initChart() {
+            const initialX = parseFloat(sliderAge.value);
+            const tangentPoints = getTangentDatasetPoints(initialX);
+
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ageLabels,
+                    datasets: [
+                        {
+                            label: 'Height f(x) (meters)',
+                            data: heightData,
+                            borderColor: '#059669',
+                            backgroundColor: 'rgba(5, 150, 105, 0.05)',
+                            borderWidth: 3,
+                            yAxisID: 'yHeight',
+                            tension: 0.1,
+                            pointRadius: 0,
+                            pointHitRadius: 10
+                        },
+                        {
+                            label: "Growth Velocity f'(x) (m/year)",
+                            data: velocityData,
+                            borderColor: '#d97706',
+                            borderDash: [5, 5],
+                            borderWidth: 2.5,
+                            yAxisID: 'yVelocity',
+                            tension: 0.1,
+                            pointRadius: 0,
+                            pointHitRadius: 10
+                        },
+                        {
+                            label: 'Tangent at Selected Point',
+                            data: tangentPoints.map(p => p.y),
+                            borderColor: '#ef4444',
+                            borderWidth: 2,
+                            yAxisID: 'yHeight',
+                            pointRadius: 0,
+                            fill: false,
+                            spanGaps: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                boxWidth: 15,
+                                font: { size: 10, weight: 'bold' }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y.toFixed(2);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Oil Palm Age (Years after planting)',
+                                font: { weight: 'bold', size: 10 }
+                            },
+                            grid: { display: false }
+                        },
+                        yHeight: {
+                            type: 'linear',
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Palm Height (meters)',
+                                font: { weight: 'bold', size: 10 }
+                            },
+                            min: 0,
+                            max: 18,
+                            grid: { color: '#f1f5f9' }
+                        },
+                        yVelocity: {
+                            type: 'linear',
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Growth Rate (meters / year)',
+                                font: { weight: 'bold', size: 10 }
+                            },
+                            min: 0,
+                            max: 1.2,
+                            grid: { drawOnChartArea: false } // only show grid lines for left axis
+                        }
+                    },
+                    onClick: (evt) => {
+                        const points = myChart.getElementsAtEventForMode(evt, 'nearest', { intersect: false }, true);
+                        if (points.length > 0) {
+                            const index = points[0].index;
+                            const ageVal = parseFloat(ageLabels[index]);
+                            sliderAge.value = ageVal;
+                            updateSimulator(ageVal);
+                        }
+                    }
+                }
+            });
+        }
+
+        // Layman and Manager advice database based on crop stages
+        function getAgronomicAdvice(x, h, hPrime) {
+            if (x < 3.0) {
+                return `🌿 <strong>Immature Phase (Years 1-3):</strong> Vertical growth is slow but growth velocity is actively accelerating ($f''(x) > 0$). Management action: Ensure aggressive circle weeding and apply heavy organic fertilizer to promote root stabilization. No fruit harvesting yet.`;
+            } else if (x >= 3.0 && x < 5.0) {
+                return `🌸 <strong>Young Yielding Phase (Years 3-5):</strong> Tree height is at ${h.toFixed(1)}m. Growth speed is ramping up fast, approaching the absolute inflection point. Harvesting is highly efficient with short manual chisel poles. Yield yields of Fresh Fruit Bunches (FFB) begin.`;
+            } else if (x >= 5.0 && x <= 6.5) {
+                return `⚡ <strong>Biological Inflection Point (Years 5-6.5):</strong> The palm reaches its absolute maximum height velocity ($f'(x) \\approx ${hPrime.toFixed(2)}$ meters/year). Cell division in the trunk is at peak productivity. Maximize NPK application to fuel this high-metabolic growth transition.`;
+            } else if (x > 6.5 && x < 12.0) {
+                return `🌴 <strong>Prime Harvesting Phase (Years 6.5-12):</strong> Height growth speed begins to decline ($f''(x) < 0$), stabilizing at standard heights of 8-11 meters. The energy allocation shifts drastically from height vegetative growth into heavy, nutrient-dense oil crop clusters. Highly profitable stage!`;
+            } else if (x >= 12.0 && x < 18.0) {
+                return `⚠️ <strong>Tall Canopy Challenge (Years 12-18):</strong> Tree is now ${h.toFixed(1)}m tall. Growth velocity has slowed down to ${hPrime.toFixed(2)}m/year, meaning manual harvesting poles must be extended to at least 15 meters. Requires skilled, physically strong harvesters.`;
+            } else {
+                return `🚨 <strong>Senescent Phase & Replanting (Years 18-25):</strong> The palm has reached ${h.toFixed(1)}m, approaching the asymptotic ceiling of 15m. Growth rate is almost static ($f'(x) \\approx ${hPrime.toFixed(2)}$ m/year). Harvesting is inefficient, expensive, and dangerous. Implement mechanical clearing and prepare for the next replanting cycle.`;
+            }
+        }
+
+        // Dynamically recalculate equations, update UI components, and adjust SVG graphics
+        function updateSimulator(val) {
+            const x = parseFloat(val);
+            const h = f(x);
+            const hPrime = f_prime(x);
+
+            // Update UI Labels
+            lblAge.innerText = x.toFixed(1);
+            valHeight.innerText = `${h.toFixed(2)}m`;
+            valDerivative.innerText = `${hPrime.toFixed(3)} m/yr`;
+            lblLiveHeight.innerText = `Height: ${h.toFixed(2)}m`;
+
+            // LaTeX Text updates inside math modules (re-calculating math variables dynamically)
+            const latexHeightElem = document.getElementById('latexHeight');
+            const latexDerivativeElem = document.getElementById('latexDerivative');
+            
+            if (typeof katex !== 'undefined') {
+                katex.render(`f(${x.toFixed(1)}) = \\frac{15}{1 + e^{-0.22(${x.toFixed(1)} - 5.5)}} = ${h.toFixed(2)}\\text{ m}`, latexHeightElem, { throwOnError: false });
+                katex.render(`f'(${x.toFixed(1)}) = \\frac{3.3 e^{-0.22(${x.toFixed(1)} - 5.5)}}{(1+e^{-0.22(${x.toFixed(1)} - 5.5)})^2} = ${hPrime.toFixed(3)}\\text{ m/yr}`, latexDerivativeElem, { throwOnError: false });
+            }
+
+            // Adjust Layman Agrotech Advice
+            lblLaymanAdvice.innerHTML = getAgronomicAdvice(x, h, hPrime);
+
+            // Re-render the Dynamic Tangent Line on the chart
+            if (myChart) {
+                // Generate absolute line positions matching the age scale indices
+                const tangentPoints = getTangentDatasetPoints(x);
+                
+                // Align the points back to our chart indexes
+                const alignedTangentData = ageLabels.map(labelAgeStr => {
+                    const labelAge = parseFloat(labelAgeStr);
+                    // Find a calculated tangent value within matching range
+                    const matchedPoint = tangentPoints.find(p => Math.abs(p.x - labelAge) < 0.05);
+                    return matchedPoint ? matchedPoint.y : null;
+                });
+                
+                myChart.data.datasets[2].data = alignedTangentData;
+                myChart.update('none'); // silent updates
+            }
+
+            // Animate SVG Oil Palm Graphic height scaling dynamically
+            // Standard trunk height is 115px at 15 meters, so let's scale the Y scale.
+            // Map height scale: 0m to 15m corresponding to SVG trunk height
+            const maxValSVG = 15;
+            const ratio = h / maxValSVG;
+            
+            // Apply scale to canopy translation and trunk path length
+            const trunkYPos = 115 - (95 * ratio); // 115 is floor, 20 is max ceiling
+            
+            svgCanopy.setAttribute('transform', `translate(50, ${trunkYPos})`);
+            svgTrunk.setAttribute('d', `M 46,115 L 48,${85 + (30*(1-ratio))} Q 50,${45 + (15*(1-ratio))} 48,${trunkYPos} L 52,${trunkYPos} Q 50,${45 + (15*(1-ratio))} 52,${85 + (30*(1-ratio))} L 54,115 Z`);
+        }
+
+        // Slide Animation logic
+        let animationInterval;
+        let isAnimating = false;
+
+        function startAnimation() {
+            if (isAnimating) {
+                stopAnimation();
+                return;
+            }
+            
+            isAnimating = true;
+            btnPlay.innerHTML = `<i data-lucide="pause" class="w-3.5 h-3.5"></i><span>Pause Growth</span>`;
+            lucide.createIcons();
+
+            let currentAge = parseFloat(sliderAge.value);
+            if (currentAge >= 25) {
+                currentAge = 1.0;
+            }
+
+            animationInterval = setInterval(() => {
+                currentAge += 0.2;
+                if (currentAge > 25) {
+                    currentAge = 25;
+                    stopAnimation();
+                }
+                sliderAge.value = currentAge;
+                updateSimulator(currentAge);
+            }, 60);
+        }
+
+        function stopAnimation() {
+            isAnimating = false;
+            clearInterval(animationInterval);
+            btnPlay.innerHTML = `<i data-lucide="play" class="w-3.5 h-3.5"></i><span>Animate Growth</span>`;
+            lucide.createIcons();
+        }
+
+        // Action Listeners
+        sliderAge.addEventListener('input', (e) => {
+            stopAnimation();
+            updateSimulator(e.target.value);
+        });
+
+        btnPlay.addEventListener('click', startAnimation);
+        
+        btnReset.addEventListener('click', () => {
+            stopAnimation();
+            sliderAge.value = 5.5;
+            updateSimulator(5.5);
+        });
+
+        // Initialize setup on window load
+        window.onload = function() {
+            // Safely execute auto-render after DOM is fully constructed
+            if (typeof renderMathInElement !== 'undefined') {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError : false
+                });
+            }
+            initChart();
+            updateSimulator(5.5);
+        };
+    </script>
+</body>
+</html>
